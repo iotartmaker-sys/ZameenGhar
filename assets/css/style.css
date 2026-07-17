@@ -42,3 +42,42 @@ object-fit:cover;
     background-size:cover;
     background-position:center;
 }
+.category-card{
+
+    background:#fff;
+
+    border-radius:15px;
+
+    padding:30px 15px;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+}
+
+.category-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 15px 35px rgba(0,0,0,.15);
+
+}
+
+.category-card .icon{
+
+    font-size:45px;
+
+    margin-bottom:15px;
+
+}
+
+.category-card h5{
+
+    font-weight:600;
+
+}
