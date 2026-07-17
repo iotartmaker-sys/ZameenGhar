@@ -32,3 +32,13 @@ height:220px;
 object-fit:cover;
 
 }
+.hero{
+    min-height:650px;
+
+    background:
+    linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),
+    url("../images/hero.jpg");
+
+    background-size:cover;
+    background-position:center;
+}
