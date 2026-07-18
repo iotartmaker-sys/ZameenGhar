@@ -28,8 +28,8 @@ href="assets/css/style.css">
     
             <div>
     
-                <h2 class="fw-bold text-success">
-                    👋 Welcome, Bajrang
+                <h2 id="welcomeUser" class="fw-bold text-success">
+                    👋 Welcome
                 </h2>
     
                 <p class="text-muted mb-0">
@@ -287,7 +287,10 @@ href="assets/css/style.css">
     </div>
     <div class="text-center mt-5">
 
-        <button class="btn btn-danger btn-lg">
+        <button id="logoutBtn" class="btn btn-danger btn-lg">
+            
+        
+            
     
             <i class="bi bi-box-arrow-right"></i>
     
@@ -303,9 +306,15 @@ href="assets/css/style.css">
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 
+<script src="assets/js/firebase.js"></script>
 <script src="assets/js/config.js"></script>
 <script src="assets/js/app.js"></script>
+<script src="assets/js/auth.js"></script>
 
 <div id="footer"></div>
 </body>
