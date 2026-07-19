@@ -1,25 +1,62 @@
-const propertyForm = document.getElementById("propertyForm");
+// ==========================================
+// ZameenGhar - Post Property
+// assets/js/post-property.js
+// ==========================================
 
-propertyForm.addEventListener("submit", async (e) => {
+const propertyForm = document.getElementById("propertyForm");
+const publishBtn = document.getElementById("publishBtn");
+const btnText = document.getElementById("btnText");
+const statusMessage = document.getElementById("statusMessage");
+
+// ------------------------------
+// Login Check
+// ------------------------------
+
+firebase.auth().onAuthStateChanged(function (user) {
+
+    if (!user) {
+
+        alert("Please login first.");
+
+        window.location.href = "login.html";
+
+    }
+
+});
+
+// ------------------------------
+// Submit Property
+// ------------------------------
+
+propertyForm.addEventListener("submit", async function (e) {
 
     e.preventDefault();
 
     const user = firebase.auth().currentUser;
 
     if (!user) {
+
         alert("Please login first.");
-        window.location.href = "login.html";
+
         return;
+
     }
 
-    const publishBtn = document.getElementById("publishBtn");
-
     publishBtn.disabled = true;
-    publishBtn.innerHTML = "Publishing...";
+
+    if (btnText) {
+        btnText.innerHTML = "Publishing...";
+    } else {
+        publishBtn.innerHTML = "Publishing...";
+    }
+
+    if (statusMessage) {
+        statusMessage.innerHTML = "";
+    }
 
     try {
 
-        await db.collection("properties").add({
+        const propertyData = {
 
             title: document.getElementById("title").value.trim(),
 
@@ -55,21 +92,45 @@ propertyForm.addEventListener("submit", async (e) => {
 
             ownerEmail: user.email,
 
-            status: "Pending",
+            ownerName: user.displayName || "",
+
+            imageUrls: [],
 
             featured: false,
 
+            status: "Pending",
+
             views: 0,
+
+            favorites: 0,
 
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
 
-        });
+        };
 
-        alert("✅ Property Published Successfully");
+        await db.collection("properties").add(propertyData);
+
+        if (statusMessage) {
+
+            statusMessage.innerHTML = `
+
+                <div class="alert alert-success">
+
+                    ✅ Property Published Successfully.
+
+                </div>
+
+            `;
+
+        }
 
         propertyForm.reset();
 
-        window.location.href = "dashboard.html";
+        setTimeout(function () {
+
+            window.location.href = "dashboard.html";
+
+        }, 1200);
 
     }
 
@@ -77,12 +138,37 @@ propertyForm.addEventListener("submit", async (e) => {
 
         console.error(error);
 
-        alert(error.message);
+        if (statusMessage) {
+
+            statusMessage.innerHTML = `
+
+                <div class="alert alert-danger">
+
+                    ${error.message}
+
+                </div>
+
+            `;
+
+        } else {
+
+            alert(error.message);
+
+        }
 
     }
 
     publishBtn.disabled = false;
 
-    publishBtn.innerHTML = '<i class="bi bi-cloud-upload-fill"></i> Publish Property';
+    if (btnText) {
+
+        btnText.innerHTML = "Publish Property";
+
+    } else {
+
+        publishBtn.innerHTML =
+            '<i class="bi bi-cloud-upload-fill"></i> Publish Property';
+
+    }
 
 });
