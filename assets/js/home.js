@@ -1,15 +1,33 @@
 // ======================================
 // ZameenGhar - Home Page
-// assets/js/home.js
+// Part 1
 // ======================================
 
-const db = firebase.firestore();
+// ------------------------------
+// Elements
+// ------------------------------
 
 const propertyList = document.getElementById("propertyList");
 
-loadProperties();
+let currentUser = null;
 
-async function loadProperties() {
+// ------------------------------
+// Login Check
+// ------------------------------
+
+firebase.auth().onAuthStateChanged(function(user){
+
+    currentUser = user;
+
+    loadProperties();
+
+});
+
+// ------------------------------
+// Load Properties
+// ------------------------------
+
+async function loadProperties(){
 
     propertyList.innerHTML = `
 
@@ -17,19 +35,25 @@ async function loadProperties() {
 
         <div class="spinner-border text-success"></div>
 
-        <p class="mt-3">Loading Properties...</p>
+        <p class="mt-3">
+            Loading Properties...
+        </p>
 
     </div>
 
     `;
 
-    try {
+    try{
+
+        // --------------------------
+        // Load All Properties
+        // --------------------------
 
         const snapshot = await db
             .collection("properties")
             .get();
 
-        if (snapshot.empty) {
+        if(snapshot.empty){
 
             propertyList.innerHTML = `
 
@@ -51,30 +75,70 @@ async function loadProperties() {
 
         propertyList.innerHTML = "";
 
-        snapshot.forEach(doc => {
+        // --------------------------
+        // Load Favorites
+        // --------------------------
+
+        let favoriteIds = [];
+
+        if(currentUser){
+
+            const favoriteSnapshot = await db
+                .collection("favorites")
+                .where("userId","==",currentUser.uid)
+                .get();
+
+            favoriteSnapshot.forEach(function(doc){
+
+                favoriteIds.push(
+                    doc.data().propertyId
+                );
+
+            });
+
+        }
+
+        // --------------------------
+        // Property Cards
+        // --------------------------
+
+        snapshot.forEach(function(doc){
 
             const p = doc.data();
 
             let image =
-                "https://placehold.co/600x400?text=ZameenGhar";
+            "https://placehold.co/600x400?text=ZameenGhar";
 
-            if (p.imageUrls &&
-                p.imageUrls.length > 0) {
+            if(p.images && p.images.length>0){
 
-                image = p.imageUrls[0];
+                image = p.images[0];
 
-            }
+            }            propertyList.innerHTML += `
 
-            propertyList.innerHTML += `
+            <div class="col-lg-4 col-md-6 mb-4">
 
-            <div class="col-lg-4 col-md-6">
-
-                <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card shadow-sm border-0 rounded-4 h-100 position-relative">
 
                     <img
                         src="${image}"
                         class="card-img-top"
                         style="height:220px;object-fit:cover;">
+
+                    <button
+                        class="btn ${
+                            favoriteIds.includes(doc.id)
+                                ? "btn-danger"
+                                : "btn-light"
+                        } rounded-circle position-absolute top-0 end-0 m-2 favoriteBtn"
+                        data-id="${doc.id}">
+
+                        <i class="bi ${
+                            favoriteIds.includes(doc.id)
+                                ? "bi-heart-fill"
+                                : "bi-heart"
+                        }"></i>
+
+                    </button>
 
                     <div class="card-body">
 
@@ -84,7 +148,7 @@ async function loadProperties() {
 
                         </h5>
 
-                        <p class="text-muted mb-2">
+                        <p class="text-muted">
 
                             <i class="bi bi-geo-alt-fill text-danger"></i>
 
@@ -119,10 +183,10 @@ async function loadProperties() {
                     <div class="card-footer bg-white border-0">
 
                         <a
-                        href="property-details.html?id=${doc.id}"
-                        class="btn btn-success w-100">
+                            href="property-details.html?id=${doc.id}"
+                            class="btn btn-success w-100">
 
-                        View Details
+                            View Details
 
                         </a>
 
@@ -136,26 +200,107 @@ async function loadProperties() {
 
         });
 
-    }
+        // ==========================
+        // Favorite Button Events
+        // ==========================
 
-    catch (error) {
+        document.querySelectorAll(".favoriteBtn").forEach(function(btn){            btn.addEventListener("click", async function(e){
 
-        console.error(error);
+            e.preventDefault();
+            e.stopPropagation();
 
-        propertyList.innerHTML = `
+            if(!currentUser){
 
-        <div class="col-12">
+                alert("Please login first.");
 
-            <div class="alert alert-danger">
+                window.location.href = "login.html";
 
-                ${error.message}
+                return;
 
-            </div>
+            }
+
+            const propertyId = this.dataset.id;
+
+            try{
+
+                const snapshot = await db
+                    .collection("favorites")
+                    .where("userId","==",currentUser.uid)
+                    .where("propertyId","==",propertyId)
+                    .get();
+
+                if(snapshot.empty){
+
+                    await db.collection("favorites").add({
+
+                        userId: currentUser.uid,
+
+                        propertyId: propertyId,
+
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+
+                    });
+
+                    this.classList.remove("btn-light");
+                    this.classList.add("btn-danger");
+
+                    this.innerHTML = `
+                        <i class="bi bi-heart-fill"></i>
+                    `;
+
+                }
+
+                else{
+
+                    for(const doc of snapshot.docs){
+
+                        await doc.ref.delete();
+
+                    }
+
+                    this.classList.remove("btn-danger");
+                    this.classList.add("btn-light");
+
+                    this.innerHTML = `
+                        <i class="bi bi-heart"></i>
+                    `;
+
+                }
+
+            }
+
+            catch(error){
+
+                console.error(error);
+
+                alert(error.message);
+
+            }
+
+        });
+
+    });
+
+}
+
+catch(error){
+
+    console.error(error);
+
+    propertyList.innerHTML = `
+
+    <div class="col-12">
+
+        <div class="alert alert-danger text-center">
+
+            ${error.message}
 
         </div>
 
-        `;
+    </div>
 
-    }
+    `;
+
+}
 
 }

@@ -31,6 +31,15 @@ propertyRef.get().then(async (doc) => {
     }
 
     const property = doc.data();
+    
+    // ==========================
+    // Favorite Button
+    // ==========================
+
+    const favoriteBtn = document.getElementById("favoriteBtn");
+
+
+
 
     // Increase Views
 
@@ -113,7 +122,101 @@ propertyRef.get().then(async (doc) => {
 
     document.getElementById("propertyDescription").innerText =
         property.description || "No description available.";
+    // ==========================
+    // Check Favorite Status
+    // ==========================
 
+    const currentUser = firebase.auth().currentUser;
+
+    if (currentUser && favoriteBtn) {
+
+        const favoriteSnapshot = await db
+            .collection("favorites")
+            .where("userId", "==", currentUser.uid)
+            .where("propertyId", "==", propertyId)
+            .get();
+
+        if (!favoriteSnapshot.empty) {
+
+            favoriteBtn.classList.remove("btn-outline-danger");
+            favoriteBtn.classList.add("btn-danger");
+
+            favoriteBtn.innerHTML = `
+                <i class="bi bi-heart-fill"></i>
+                Saved
+            `;
+
+        }
+
+    }
+
+
+
+    favoriteBtn.addEventListener("click", async function () {
+
+        const user = firebase.auth().currentUser;
+    
+        if (!user) {
+    
+            alert("Please login first.");
+    
+            window.location.href = "login.html";
+    
+            return;
+    
+        }
+    
+        const snapshot = await db
+            .collection("favorites")
+            .where("userId", "==", user.uid)
+            .where("propertyId", "==", propertyId)
+            .get();
+    
+        if (snapshot.empty) {
+    
+            await db.collection("favorites").add({
+    
+                userId: user.uid,
+    
+                propertyId: propertyId,
+    
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    
+            });
+    
+            favoriteBtn.classList.remove("btn-outline-danger");
+            favoriteBtn.classList.add("btn-danger");
+    
+            favoriteBtn.innerHTML = `
+                <i class="bi bi-heart-fill"></i>
+                Saved
+            `;
+    
+        } else {
+    
+            snapshot.forEach(async function(doc){
+    
+                await doc.ref.delete();
+    
+            });
+    
+            favoriteBtn.classList.remove("btn-danger");
+            favoriteBtn.classList.add("btn-outline-danger");
+    
+            favoriteBtn.innerHTML = `
+                <i class="bi bi-heart"></i>
+                Save Property
+            `;
+    
+        }
+    
+    });
+
+
+        
+
+
+    
     // Owner Information
 
     document.getElementById("ownerName").innerText =
