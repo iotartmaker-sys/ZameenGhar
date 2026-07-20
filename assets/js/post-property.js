@@ -1,34 +1,9 @@
-// ==========================================
-// ZameenGhar - Post Property
-// assets/js/post-property.js
-// ==========================================
-
 const propertyForm = document.getElementById("propertyForm");
-const publishBtn = document.getElementById("publishBtn");
-const btnText = document.getElementById("btnText");
-const statusMessage = document.getElementById("statusMessage");
 
-// ------------------------------
-// Login Check
-// ------------------------------
+const CLOUD_NAME = "sbcjnti9";
+const UPLOAD_PRESET = "zameenghar";
 
-firebase.auth().onAuthStateChanged(function (user) {
-
-    if (!user) {
-
-        alert("Please login first.");
-
-        window.location.href = "login.html";
-
-    }
-
-});
-
-// ------------------------------
-// Submit Property
-// ------------------------------
-
-propertyForm.addEventListener("submit", async function (e) {
+propertyForm.addEventListener("submit", async (e) => {
 
     e.preventDefault();
 
@@ -38,25 +13,59 @@ propertyForm.addEventListener("submit", async function (e) {
 
         alert("Please login first.");
 
+        window.location.href = "login.html";
+
         return;
 
     }
 
+    const publishBtn = document.getElementById("publishBtn");
+
     publishBtn.disabled = true;
 
-    if (btnText) {
-        btnText.innerHTML = "Publishing...";
-    } else {
-        publishBtn.innerHTML = "Publishing...";
-    }
-
-    if (statusMessage) {
-        statusMessage.innerHTML = "";
-    }
+    publishBtn.innerHTML =
+        '<span class="spinner-border spinner-border-sm"></span> Publishing...';
 
     try {
 
-        const propertyData = {
+        // Selected Images
+
+        const files = document.getElementById("images").files;
+
+        let imageUrls = [];
+
+        // Upload Images One By One
+
+        for (let file of files) {
+
+            const formData = new FormData();
+
+            formData.append("file", file);
+
+            formData.append("upload_preset", UPLOAD_PRESET);
+
+            const response = await fetch(
+
+                `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+
+                {
+
+                    method: "POST",
+
+                    body: formData
+
+                }
+
+            );
+
+            const data = await response.json();
+
+            imageUrls.push(data.secure_url);
+
+        }
+        // Save Property in Firestore
+
+        await db.collection("properties").add({
 
             title: document.getElementById("title").value.trim(),
 
@@ -92,13 +101,11 @@ propertyForm.addEventListener("submit", async function (e) {
 
             ownerEmail: user.email,
 
-            ownerName: user.displayName || "",
-
-            imageUrls: [],
-
-            featured: false,
+            images: imageUrls,
 
             status: "Pending",
+
+            featured: false,
 
             views: 0,
 
@@ -106,68 +113,31 @@ propertyForm.addEventListener("submit", async function (e) {
 
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
 
-        };
+        });
 
-        await db.collection("properties").add(propertyData);
-
-        if (statusMessage) {
-
-            statusMessage.innerHTML = `
-
-                <div class="alert alert-success">
-
-                    ✅ Property Published Successfully.
-
-                </div>
-
-            `;
-
-        }
+        alert("✅ Property Published Successfully");
 
         propertyForm.reset();
 
-        setTimeout(function () {
-
-            window.location.href = "dashboard.html";
-
-        }, 1200);
-
+        window.location.href = "dashboard.html";
     }
 
     catch (error) {
 
         console.error(error);
 
-        if (statusMessage) {
-
-            statusMessage.innerHTML = `
-
-                <div class="alert alert-danger">
-
-                    ${error.message}
-
-                </div>
-
-            `;
-
-        } else {
-
-            alert(error.message);
-
-        }
+        alert("❌ " + error.message);
 
     }
 
-    publishBtn.disabled = false;
+    finally {
 
-    if (btnText) {
+        publishBtn.disabled = false;
 
-        btnText.innerHTML = "Publish Property";
-
-    } else {
-
-        publishBtn.innerHTML =
-            '<i class="bi bi-cloud-upload-fill"></i> Publish Property';
+        publishBtn.innerHTML = `
+            <i class="bi bi-cloud-upload-fill"></i>
+            Publish Property
+        `;
 
     }
 

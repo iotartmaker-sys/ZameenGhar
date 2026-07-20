@@ -161,11 +161,14 @@ data-id="${doc.id}">
         document.querySelectorAll(".editBtn").forEach(function(btn){
 
             btn.addEventListener("click", function(){
-
-                alert("Edit Property Feature Coming Soon");
-
+        
+                const id = this.dataset.id;
+        
+                window.location.href =
+                "edit-property.html?id=" + id;
+        
             });
-
+        
         });
 
     }

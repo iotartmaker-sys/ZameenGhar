@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Property | ZameenGhar</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet"
+        href="assets/css/style.css">
+
+</head>
+
+<body class="bg-light">
+
+<div class="container py-5">
+
+<div class="row justify-content-center">
+
+<div class="col-lg-10">
+
+<div class="card shadow-lg border-0 rounded-4">
+
+<div class="card-body p-5">
+
+<div class="text-center mb-5">
+
+<h2 class="fw-bold text-success">
+    ✏️ Edit Property
+</h2>
+
+<p class="text-muted">
+    Update your property details.
+</p>
+
+</div>
+
+<form id="propertyForm" autocomplete="off">
+<div class="row">
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label fw-semibold">
+Property Title
+</label>
+
+<input
+type="text"
+id="title"
+class="form-control"
+placeholder="e.g. Luxury Villa"
+required>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label fw-semibold">
+Property Type
+</label>
+
+<select
+id="type"
+class="form-select"
+required>
+
+<option value="">Select Property Type</option>
+
+<option>Apartment</option>
+
+<option>Villa</option>
+
+<option>House</option>
+
+<option>Plot</option>
+
+<option>Farm Land</option>
+
+<option>Commercial Shop</option>
+
+</select>
+
+</div>
+
+</div>
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label fw-semibold">
+Purpose
+</label>
+
+<select
+id="purpose"
+class="form-select"
+required>
+
+<option value="">Select Purpose</option>
+
+<option>For Sale</option>
+
+<option>For Rent</option>
+
+</select>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label fw-semibold">
+Price
+</label>
+
+<input
+type="number"
+id="price"
+class="form-control"
+placeholder="Enter Property Price"
+required>
+
+</div>
+
+</div>
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label fw-semibold">
+State
+</label>
+
+<select
+id="state"
+class="form-select"
+required>
+
+<option value="">Select State</option>
+
+<option>Rajasthan</option>
+
+<option>Delhi</option>
+
+<option>Maharashtra</option>
+
+<option>Gujarat</option>
+
+</select>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label class="form-label fw-semibold">
+City
+</label>
+
+<input
+type="text"
+id="city"
+class="form-control"
+placeholder="Enter City"
+required>
+
+</div>
+
+</div>
+
+<div class="mb-3">
+
+<label class="form-label fw-semibold">
+Full Address
+</label>
+
+<textarea
+id="address"
+class="form-control"
+rows="3"
+placeholder="Enter complete property address"></textarea>
+
+</div>
+<div class="row">
+
+    <div class="col-md-3 mb-3">
+
+        <label class="form-label fw-semibold">
+            Area (Sq.ft)
+        </label>
+
+        <input
+        type="number"
+        id="area"
+        class="form-control"
+        placeholder="1800">
+
+    </div>
+
+    <div class="col-md-3 mb-3">
+
+        <label class="form-label fw-semibold">
+            Bedrooms
+        </label>
+
+        <input
+        type="number"
+        id="bedrooms"
+        class="form-control"
+        placeholder="3">
+
+    </div>
+
+    <div class="col-md-3 mb-3">
+
+        <label class="form-label fw-semibold">
+            Bathrooms
+        </label>
+
+        <input
+        type="number"
+        id="bathrooms"
+        class="form-control"
+        placeholder="2">
+
+    </div>
+
+    <div class="col-md-3 mb-3">
+
+        <label class="form-label fw-semibold">
+            Parking
+        </label>
+
+        <select
+        id="parking"
+        class="form-select">
+
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+
+        </select>
+
+    </div>
+
+</div>
+
+<div class="mb-4">
+
+    <label class="form-label fw-semibold">
+        Property Description
+    </label>
+
+    <textarea
+    id="description"
+    class="form-control"
+    rows="5"
+    placeholder="Describe your property in detail..."></textarea>
+
+</div>
+
+<div class="mb-4">
+
+    <label class="form-label fw-semibold">
+        Upload Property Images
+    </label>
+
+    <input
+    type="file"
+    id="images"
+    class="form-control"
+    accept="image/*"
+    multiple
+    required>
+    <div
+        id="oldImages"
+        class="row mt-3 g-2">
+
+    </div>
+
+    <div id="imagePreview" class="row mt-3"></div>
+
+    <small class="text-muted">
+
+        You can select multiple images (JPG, PNG, WEBP).
+
+    </small>
+
+</div>
+
+<div class="row">
+
+    <div class="col-md-4 mb-3">
+
+        <label class="form-label fw-semibold">
+            Contact Name
+        </label>
+
+        <input
+        type="text"
+        id="contactName"
+        class="form-control"
+        placeholder="Enter Contact Name">
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+        <label class="form-label fw-semibold">
+            Mobile Number
+        </label>
+
+        <input
+        type="tel"
+        id="mobile"
+        class="form-control"
+        placeholder="Enter Mobile Number">
+
+    </div>
+
+    <div class="col-md-4 mb-3">
+
+        <label class="form-label fw-semibold">
+            WhatsApp Number
+        </label>
+
+        <input
+        type="tel"
+        id="whatsapp"
+        class="form-control"
+        placeholder="Enter WhatsApp Number">
+
+    </div>
+
+</div>
+<div class="text-center mt-5">
+
+    <button
+    type="submit"
+    id="updateBtn"
+    class="btn btn-primary btn-lg px-5">
+
+    <i class="bi bi-check-circle"></i>
+
+    Update Property
+
+    </button>
+
+    <div class="progress mt-4 d-none" id="uploadProgress">
+
+    <div
+    class="progress-bar progress-bar-striped progress-bar-animated"
+    id="progressBar"
+    style="width:0%">
+
+    0%
+
+    </div>
+
+    </div>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div id="statusMessage" class="mt-4"></div>
+<div id="footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+
+<script src="assets/js/firebase.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/app.js"></script>
+
+<!-- Property Upload -->
+<script src="assets/js/edit-property.js"></script>
+</body>
+
+</html>

@@ -29,3 +29,10 @@ const CONFIG = {
         "91XXXXXXXXXX"
 
 };
+// ===============================
+// Cloudinary Configuration
+// ===============================
+
+const CLOUDINARY_CLOUD_NAME = "sbcjnti9";
+
+const CLOUDINARY_UPLOAD_PRESET = "zameenghar";
